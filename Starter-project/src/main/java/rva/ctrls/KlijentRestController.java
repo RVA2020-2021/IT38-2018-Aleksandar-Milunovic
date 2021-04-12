@@ -78,11 +78,18 @@ public class KlijentRestController {
 			return new ResponseEntity<Klijent>(HttpStatus.NO_CONTENT);
 		}
 		jdbcTemplate.execute("DELETE FROM racun WHERE klijent =  " + id);
+		
 		klijentRepository.deleteById(id);
+		klijentRepository.flush();
 		if(id == -100) {
 			jdbcTemplate.execute(
 					"INSERT INTO \"klijent\"(\"id\", \"ime\", \"prezime\", \"broj_lk\", \"kredit\") "
-					+ "VALUES (-100, 'Ime Test', 'Prezime Test', 100000000, 1)" 
+					+ "VALUES (-100, 'Ime Test', 'Prezime Test', 100000000, -100)" 
+					);
+			
+			jdbcTemplate.execute(
+					"INSERT INTO \"racun\"(\"id\", \"naziv\", \"oznaka\", \"opis\", \"tip_racuna\", \"klijent\") "
+					+ "VALUES (-100, 'Naziv Test', 'Oznaka Test', 'Opis Test', -100, -100)" 
 					);
 		}
 		return new ResponseEntity<Klijent>(HttpStatus.OK);

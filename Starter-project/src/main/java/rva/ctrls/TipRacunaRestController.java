@@ -79,10 +79,17 @@ public class TipRacunaRestController {
 		}
 		jdbcTemplate.execute("DELETE FROM racun WHERE tip_racuna = " + id);
 		tpRepository.deleteById(id);
+		tpRepository.flush();
+		
 		if(id == -100) {
 			jdbcTemplate.execute(
 					"INSERT INTO \"tip_racuna\"(\"id\", \"naziv\", \"oznaka\", \"opis\") "
 					+ "VALUES (-100, 'Naziv Test', 'Oznaka Test', 'Opis Test')" 
+					);
+			
+			jdbcTemplate.execute(
+					"INSERT INTO \"racun\"(\"id\", \"naziv\", \"oznaka\", \"opis\", \"tip_racuna\", \"klijent\") "
+					+ "VALUES (-100, 'Naziv Test', 'Oznaka Test', 'Opis Test', -100, -100)" 
 					);
 		}
 		

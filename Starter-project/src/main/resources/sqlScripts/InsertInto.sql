@@ -28,7 +28,7 @@ INSERT INTO "klijent" ("id", "ime", "prezime", "broj_lk", "kredit")
 VALUES (nextval('klijent_seq'), 'Strahinja', 'Ilic', 004287453, 5);
 
 INSERT INTO "klijent" ("id", "ime", "prezime", "broj_lk", "kredit")
-VALUES (-100, 'TestImeKlijenta', 'TestPrezimeKlijenta', 000000000, 1);
+VALUES (-100, 'TestImeKlijenta', 'TestPrezimeKlijenta', 000000000, -100);
 
 --PODACI ZA TIP RACUNA
 
@@ -58,4 +58,4 @@ INSERT INTO "racun" ("id", "naziv", "oznaka", "opis", "tip_racuna", "klijent")
 VALUES (nextval('racun_seq'), 'Racun za kupovinu tehnologije', 'RZKT', 'Racun preko kojeg se vrsi isplata industrijske masine, koja je narucena spram potreba navedenih u izvestaju od strane preduzeca.', 1, 5);
 
 INSERT INTO "racun" ("id", "naziv", "oznaka", "opis", "tip_racuna", "klijent")
-VALUES (-100, 'TestNazivRacuna', 'TestOznakaRacuna', 'TestOpisRacuna', 1, 1);
+VALUES (-100, 'TestNazivRacuna', 'TestOznakaRacuna', 'TestOpisRacuna', -100, -100);

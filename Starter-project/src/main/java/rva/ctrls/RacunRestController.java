@@ -76,10 +76,11 @@ public class RacunRestController {
 			return new ResponseEntity<Racun>(HttpStatus.NO_CONTENT);
 		}
 		racunRepository.deleteById(id);
+		racunRepository.flush();
 		if(id == -100) {
 			jdbcTemplate.execute(
 					"INSERT INTO \"racun\"(\"id\", \"naziv\", \"oznaka\", \"opis\", \"tip_racuna\", \"klijent\") "
-					+ "VALUES (-100, 'Naziv Test', 'Oznaka Test', 'Opis Test', 1, 1)" 
+					+ "VALUES (-100, 'Naziv Test', 'Oznaka Test', 'Opis Test', -100, -100)" 
 					);
 		}
 		return new ResponseEntity<Racun>(HttpStatus.OK);

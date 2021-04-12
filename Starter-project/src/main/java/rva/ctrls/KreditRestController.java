@@ -1,6 +1,8 @@
 package rva.ctrls;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import rva.jpa.Klijent;
 import rva.jpa.Kredit;
 import rva.repository.KreditRepository;
 
@@ -79,12 +82,37 @@ public class KreditRestController {
 		if(!kreditRepository.existsById(id)) {
 			return new ResponseEntity<Kredit>(HttpStatus.NO_CONTENT);
 		}
+		
+		Kredit kredit = getKredit(id);
+		List<Klijent> klijents = kredit.getKlijents();
+		
+		Iterator<Klijent> it = klijents.iterator();
+		
+		
+		
+		while(it.hasNext()) {
+			jdbcTemplate.execute("DELETE FROM racun WHERE klijent =  " + it.next().getId());
+		}
+		
 		jdbcTemplate.execute("DELETE FROM klijent WHERE kredit = " + id);
+		
 		kreditRepository.deleteById(id);
+		kreditRepository.flush();
+		
 		if (id == -100) {
 			jdbcTemplate.execute(
 					"INSERT INTO \"kredit\"(\"id\", \"naziv\", \"opis\", \"oznaka\") "
 					+ "VALUES (-100, 'Test Naziv', 'Test Oznaka', 'Test Opis')" 
+					);
+			
+			jdbcTemplate.execute(
+					"INSERT INTO \"klijent\"(\"id\", \"ime\", \"prezime\", \"broj_lk\", \"kredit\") "
+					+ "VALUES (-100, 'Ime Test', 'Prezime Test', 100000000, -100)" 
+					);
+			
+			jdbcTemplate.execute(
+					"INSERT INTO \"racun\"(\"id\", \"naziv\", \"oznaka\", \"opis\", \"tip_racuna\", \"klijent\") "
+					+ "VALUES (-100, 'Naziv Test', 'Oznaka Test', 'Opis Test', -100, -100)" 
 					);
 		}
 		return new ResponseEntity<Kredit>(HttpStatus.OK);
