@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import rva.jpa.Racun;
+import rva.jpa.TipRacuna;
 import rva.repository.RacunRepository;
+import rva.repository.TipRacunaRepository;
 
 @CrossOrigin
 @RestController
@@ -30,6 +32,8 @@ public class RacunRestController {
 	
 	@Autowired
 	private RacunRepository racunRepository;
+	@Autowired
+	private TipRacunaRepository tipRacunaRepository;
 	
 	@ApiOperation(value = "Vraæa kolekciju raèuna iz baze podataka")
 	@GetMapping("racun")
@@ -41,6 +45,13 @@ public class RacunRestController {
 	@GetMapping("racun/{id}")
 	public Racun getRacun(@PathVariable("id") Integer id) {
 		return racunRepository.getOne(id);
+	}
+	
+	@GetMapping("racuniZaTipRacunaID/{id}")
+	public Collection<Racun> getRacuniPoTipuRacunaID(@PathVariable("id") Integer id) {
+		TipRacuna r = tipRacunaRepository.getOne(id);
+		return racunRepository.findByTipRacuna(r);
+	
 	}
 	
 	@ApiOperation(value = "Vraæa kolekciju raèuna na osnovu naziva iz baze podataka")
