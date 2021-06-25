@@ -10,6 +10,6 @@ import rva.jpa.TipRacuna;
 public interface RacunRepository extends JpaRepository<Racun, Integer>{
 	
 	Collection<Racun> findByOznakaContainingIgnoreCase(String oznaka);
-	Collection<Racun> findByTipRacuna(TipRacuna tp);
+	Collection<Racun> findByTipRacuna(TipRacuna tp); 
 
 }
