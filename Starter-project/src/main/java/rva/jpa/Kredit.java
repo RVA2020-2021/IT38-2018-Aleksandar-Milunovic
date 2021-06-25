@@ -32,7 +32,7 @@ public class Kredit implements Serializable {
 
 	//bi-directional many-to-one association to Klijent
 	@JsonIgnore
-	@OneToMany(mappedBy="kredit")
+	@OneToMany(mappedBy="kredit", cascade = {CascadeType.DETACH, CascadeType.REMOVE})
 	private List<Klijent> klijents;
 
 	public Kredit() {
