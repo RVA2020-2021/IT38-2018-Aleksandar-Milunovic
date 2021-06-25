@@ -1,0 +1,13 @@
+.title-center {
+  margin: 0 auto;
+}
+
+.image {
+  height: 50em;
+  background-size: 50%;
+  width: auto;
+  background-image: url('/assets/img/image.png');
+  background-color: white;
+  background-position: center;
+  background-repeat: no-repeat;
+}

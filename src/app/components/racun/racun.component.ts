@@ -1,47 +1,57 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-import { Klijent } from 'src/app/models/klijent';
+import { Component, OnInit, Input, OnDestroy, OnChanges, ViewChild } from '@angular/core';
+import { TipRacuna } from 'src/app/models/tip-racuna';
 import { MatTableDataSource } from '@angular/material/table';
-import { KlijentService } from 'src/app/services/klijent.service';
 import { Subscription } from 'rxjs';
+import { RacunService } from 'src/app/services/racun.service';
 import { MatDialog } from '@angular/material/dialog';
-import { KlijentDialogComponent } from '../dialogs/klijent-dialog/klijent-dialog.component';
-import { Kredit } from 'src/app/models/kredit';
+import { Racun } from 'src/app/models/racun';
+import { Klijent } from 'src/app/models/klijent';
+import { RacunDialogComponent } from '../dialogs/racun-dialog/racun-dialog.component';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
-  selector: 'app-klijent',
-  templateUrl: './klijent.component.html',
-  styleUrls: ['./klijent.component.css']
+  selector: 'app-racun',
+  templateUrl: './racun.component.html',
+  styleUrls: ['./racun.component.css']
 })
-export class KlijentComponent implements OnInit, OnDestroy {
+export class RacunComponent implements OnInit, OnChanges, OnDestroy  {
 
-  displayedColumns = ['id', 'ime', 'prezime', 'brojLk', 'kredit', 'actions'];
-  dataSource: MatTableDataSource<Klijent>;
+  @Input() selektovaniTipRacuna: TipRacuna
+  displayedColumns = ['id', 'naziv', 'opis', 'oznaka', 'tipRacuna', 'klijent', 'actions'];
+  dataSource: MatTableDataSource<Racun>;
   subscription: Subscription;
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 
-  constructor(private klijentService: KlijentService,
+  constructor(private racunService: RacunService,
               private dialog: MatDialog) { }
+
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    }
+
+
+  ngOnChanges(): void {
+    if(this.selektovaniTipRacuna.id) {
+      this.loadData();
+    }
   }
 
   ngOnInit(): void {
-    this.loadData();
+   // this.loadData();
   }
 
   public loadData() {
-    this.subscription = this.klijentService.getAllKlijenti().subscribe(
+    this.subscription = this.racunService.getRacuniZaTipRacuna(this.selektovaniTipRacuna.id).subscribe(
       data => {
           this.dataSource  = new MatTableDataSource(data);
 
         // pretraga po nazivu ugnježdenog objekta
          this.dataSource.filterPredicate = (data, filter: string) => {
           const accumulator = (currentTerm, key) => {
-            return key === 'kredit' ? currentTerm + data.kredit.naziv : currentTerm + data[key];
+            return key === 'klijent' ? currentTerm + (data.klijent.ime + ' ' + data.klijent.prezime) : currentTerm + data[key];
           };
           const dataStr = Object.keys(data).reduce(accumulator, '').toLowerCase();
           const transformedFilter = filter.trim().toLowerCase();
@@ -51,7 +61,7 @@ export class KlijentComponent implements OnInit, OnDestroy {
         // sortiranje po nazivu ugnježdenog objekta
         this.dataSource.sortingDataAccessor = (data, property) => {
           switch (property) {
-            case 'kredit': return data.kredit.naziv.toLocaleLowerCase();
+            case 'klijent': return (data.klijent.ime + ' ' + data.klijent.prezime).toLocaleLowerCase();
             default: return data[property];
           }
         };
@@ -65,14 +75,18 @@ export class KlijentComponent implements OnInit, OnDestroy {
     }
   }
 
-  public openDialog(flag: number, id?: number, ime?: string, prezime?: string, brojLk?: number, kredit?: Kredit): void {
-    const dialogRef = this.dialog.open(KlijentDialogComponent, {data: {id, ime, prezime, brojLk, kredit}});
+  public openDialog(flag: number, id?: number, naziv?: string, oznaka?: string, opis?: string, tipRacuna?: TipRacuna, klijent?: Klijent) {
+    const dialogRef = this.dialog.open(RacunDialogComponent, {data: {id, naziv, oznaka, opis, tipRacuna, klijent}});
     dialogRef.componentInstance.flag = flag;
+    if(flag == 1 ){
+      dialogRef.componentInstance.data.tipRacuna = this.selektovaniTipRacuna;
+    }
     dialogRef.afterClosed().subscribe(res =>  {
       if(res == 1) {
         this.loadData();
       }
     })
+
   }
 
   applyFilter(filterValue: string) {
@@ -81,5 +95,4 @@ export class KlijentComponent implements OnInit, OnDestroy {
     this.dataSource.filter = filterValue;
 
   }
-
 }

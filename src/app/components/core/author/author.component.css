@@ -1,0 +1,23 @@
+.container {
+  display: flex;
+  flex-direction: column;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  flex-grow: 1;
+  margin-top: 8px;
+}
+
+.title-center {
+  margin: 0 auto;
+}
+
+p {
+  text-indent: 50px;
+  text-align: justify;
+  font-family: sans-serif;
+  border: 2px solid blue;
+  padding: 30px;
+  text-align: center;
+}
